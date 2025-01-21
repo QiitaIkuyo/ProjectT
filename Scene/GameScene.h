@@ -2,6 +2,7 @@
 #include "DxLib.h"
 #include "../Scene/BaseScene.h"
 
+
 using namespace std;
 
 class GameScene : public BaseScene

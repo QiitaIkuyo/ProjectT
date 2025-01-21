@@ -1,5 +1,7 @@
 #include "GameScene.h"
 
+#include "../Object/Text.h"
+
 bool GameScene::Initialize()
 {
 	return false;
@@ -7,7 +9,9 @@ bool GameScene::Initialize()
 
 void GameScene::Update()
 {
-	if(GetKeyState('Q'))
+	
+
+	if (GetKeyState('Q'))
 	{
 		exit(true);
 	}
@@ -15,4 +19,5 @@ void GameScene::Update()
 
 void GameScene::Render()
 {
+	CSVPathAssign("Assets/CSV/ex_csvfile.csv");
 }
