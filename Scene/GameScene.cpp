@@ -4,6 +4,9 @@
 
 bool GameScene::Initialize()
 {
+	p_UI = std::make_shared<UI>();
+	p_UI->Initialize();
+
 	return false;
 }
 
@@ -19,5 +22,6 @@ void GameScene::Update()
 
 void GameScene::Render()
 {
+	p_UI->Render();
 	CSVPathAssign("Assets/CSV/ex_csvfile.csv");
 }

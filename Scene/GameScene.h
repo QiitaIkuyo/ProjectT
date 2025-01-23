@@ -1,7 +1,9 @@
 #pragma once
+#include <memory>
+
 #include "DxLib.h"
 #include "../Scene/BaseScene.h"
-
+#include "../Object/UI.h"
 
 using namespace std;
 
@@ -18,5 +20,5 @@ public:
 
 private:
 
-
+	shared_ptr<UI>p_UI = nullptr;
 };
