@@ -12,8 +12,6 @@ bool GameScene::Initialize()
 
 void GameScene::Update()
 {
-	
-
 	if (GetKeyState('Q'))
 	{
 		exit(true);
