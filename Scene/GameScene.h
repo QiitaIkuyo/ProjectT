@@ -4,6 +4,7 @@
 #include "DxLib.h"
 #include "../Scene/BaseScene.h"
 #include "../Object/UI.h"
+#include "../Object/Text.h"
 
 using namespace std;
 
@@ -21,4 +22,5 @@ public:
 private:
 
 	shared_ptr<UI>p_UI = nullptr;
+	shared_ptr<Text>p_Text = nullptr;
 };

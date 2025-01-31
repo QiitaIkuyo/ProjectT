@@ -16,5 +16,8 @@ public:
 	void Initialize();
 	void Update();
 	void Render();
+
+	int messageWindow;
+
 };
 
