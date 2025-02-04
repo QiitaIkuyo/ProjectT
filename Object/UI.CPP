@@ -12,5 +12,8 @@ void UI::Update()
 
 void UI::Render()
 {
-	messageWindow = DrawGraph(0, 0, messageWindow, true);
+	if (messageWindow != -1)
+	{
+		DrawGraph(100,750, messageWindow, true);
+	}
 }

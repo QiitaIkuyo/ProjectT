@@ -17,6 +17,7 @@ public:
 	void Update();
 	void Render();
 
+private:
 	int messageWindow;
 
 };

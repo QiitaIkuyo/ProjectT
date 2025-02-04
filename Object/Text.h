@@ -1,21 +1,30 @@
 #pragma once
-
 #include <string>
 #include <vector>
 
-using namespace std;
-
-class Text {
-
+class Text
+{
 public:
-
-    Text(const string& csvFileName);
+    Text(const std::string& csvFileName);
+    ~Text();
     void Update();
     void Render() const;
 
 private:
+    struct SceneData 
+    {
+        std::string backgroundImage;
+        std::string characterImage;
+        std::string characterName;
+        std::string text;
+    };
 
-    vector<vector<string>> csvData;
+    std::vector<SceneData> csvData;
     size_t currentLine;
-    void LoadCSV(const string& fileName);
+    int backgroundImageHandle;
+    int characterImageHandle;
+
+    void LoadCSV(const std::string& fileName);
+    void LoadImages();
+    void UnloadImages();
 };

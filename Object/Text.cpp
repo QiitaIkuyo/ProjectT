@@ -4,75 +4,90 @@
 #include <sstream>
 #include <iostream>
 
-using namespace std;
-
-Text::Text(const string& csvFileName) : currentLine(0)
+Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1)
 {
     LoadCSV(csvFileName);
+    LoadImages();
 }
 
-void Text::LoadCSV(const string& fileName) 
+Text::~Text() 
 {
+    UnloadImages();
+}
 
-    ifstream file(fileName);
-    string line;
+void Text::LoadCSV(const std::string& fileName) 
+{
+    std::ifstream file(fileName);
+    std::string line;
 
     if (!file.is_open()) 
     {
-        cerr << "ファイルを開くことができませんでした: " << fileName << std::endl;
+        std::cerr << "ファイルを開くことができませんでした: " << fileName << std::endl;
         return;
     }
 
-    while (getline(file, line)) 
+    while (std::getline(file, line))
     {
+        std::stringstream ss(line);
+        std::string cell;
+        SceneData data;
 
-        vector<string> row;
-        stringstream ss(line);
-        string cell;
+        std::getline(ss, data.backgroundImage, ',');
+        std::getline(ss, data.characterImage, ',');
+        std::getline(ss, data.characterName, ',');
+        std::getline(ss, data.text, ',');
 
-        while (getline(ss, cell, ',')) 
-        {
-            row.push_back(cell);
-        }
-
-        csvData.push_back(row);
+        csvData.push_back(data);
     }
 
     file.close();
-
 }
 
-void Text::Update()
+void Text::LoadImages()
 {
+    if (currentLine < csvData.size()) 
+    {
+        backgroundImageHandle = LoadGraph(csvData[currentLine].backgroundImage.c_str());
+        characterImageHandle = LoadGraph(csvData[currentLine].characterImage.c_str());
+    }
+}
 
+void Text::UnloadImages()
+{
+    if (backgroundImageHandle != -1) 
+    {
+        DeleteGraph(backgroundImageHandle);
+    }
+    if (characterImageHandle != -1) 
+    {
+        DeleteGraph(characterImageHandle);
+    }
+}
+
+void Text::Update() 
+{
     if (CheckHitKey(KEY_INPUT_RETURN) == 1) 
-    {   
+    {
         currentLine++;
-
         if (currentLine >= csvData.size()) 
         {
             currentLine = 0; // 最後の行に達したら最初に戻る
         }
+        UnloadImages();
+        LoadImages();
     }
-
 }
 
-void Text::Render() const
+void Text::Render() const 
 {
-
-    if (currentLine < csvData.size()) 
+    if (backgroundImageHandle != -1) 
     {
-        const auto& row = csvData[currentLine];
-
-        int y = 50; // Y座標の初期値
-
-        for (const auto& cell : row) 
-        {
-
-            DrawString(50, y, cell.c_str(), GetColor(255, 255, 255));
-            
-            y += 20; // 行ごとにY座標を調整
-
-        }
+        DrawGraph(0, 0, backgroundImageHandle, TRUE);
     }
+    if (characterImageHandle != -1)
+    {
+        DrawGraph(100, 100, characterImageHandle, TRUE); // キャラクター画像の位置は適宜調整
+    }
+    DrawString(50, 50, csvData[currentLine].characterName.c_str(), GetColor(255, 255, 255));
+    DrawString(50, 100, csvData[currentLine].text.c_str(), GetColor(255, 255, 255));
 }

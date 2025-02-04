@@ -14,15 +14,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// 描画先を裏画面にする
 	SetDrawScreen(DX_SCREEN_BACK);
 
-	SetGraphMode(1280, 720, 32);
+	SetGraphMode(1920, 1080, 32);
 
 	SceneManager::TransitionScene(Game);
 	
 	SceneManager::Initialize();
 	
 	// while(裏画面を表画面に反映, メッセージ処理, 画面クリア)
-	while ((ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)) {
-		//ClearDrawScreen();
+	while ((ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)) 
+	{
+		ClearDrawScreen();
 
 		SceneManager::Update();
 		SceneManager::Render();
