@@ -23,6 +23,7 @@ void GameScene::Update()
 
 void GameScene::Render()
 {
-	p_UI->Render();
 	p_Text->Render();
+	p_UI->Render();
+	p_Text->RenderText();
 }

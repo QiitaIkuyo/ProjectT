@@ -9,22 +9,33 @@ public:
     ~Text();
     void Update();
     void Render() const;
+    void RenderText();
+
+    void SetFontSize(int size);
 
 private:
     struct SceneData 
     {
         std::string backgroundImage;
-        std::string characterImage;
-        std::string characterName;
+        std::vector<std::string> characterImages;
+        std::vector<std::string> characterNames;
         std::string text;
     };
+
 
     std::vector<SceneData> csvData;
     size_t currentLine;
     int backgroundImageHandle;
     int characterImageHandle;
+    std::vector<int> characterImageHandles;
+
+    int fontSize;
+    int fontHandle;
+
+    const std::string ASSET_PATH = "Assets/karisozai/"; // 画像フォルダのパス
 
     void LoadCSV(const std::string& fileName);
     void LoadImages();
     void UnloadImages();
+    void CreateTextFont();
 };

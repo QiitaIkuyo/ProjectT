@@ -4,7 +4,7 @@
 #include <sstream>
 #include <iostream>
 
-Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1)
+Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1), fontSize(50), fontHandle(-1)
 {
     LoadCSV(csvFileName);
     LoadImages();
@@ -13,29 +13,48 @@ Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHand
 Text::~Text() 
 {
     UnloadImages();
+    if (fontHandle != -1)
+    {
+        DeleteFontToHandle(fontHandle);
+    }
 }
 
-void Text::LoadCSV(const std::string& fileName) 
+void Text::LoadCSV(const std::string& fileName)
 {
     std::ifstream file(fileName);
     std::string line;
 
-    if (!file.is_open()) 
+    if (!file.is_open())
     {
         std::cerr << "ファイルを開くことができませんでした: " << fileName << std::endl;
         return;
     }
 
+    std::getline(file, line); // ヘッダーをスキップ
+
     while (std::getline(file, line))
     {
         std::stringstream ss(line);
-        std::string cell;
         SceneData data;
+        std::string charImages, charNames;
 
         std::getline(ss, data.backgroundImage, ',');
-        std::getline(ss, data.characterImage, ',');
-        std::getline(ss, data.characterName, ',');
+        std::getline(ss, charImages, ',');
+        std::getline(ss, charNames, ',');
         std::getline(ss, data.text, ',');
+
+        // カンマ区切りで複数のキャラクターを格納
+        std::stringstream imgStream(charImages);
+        std::string img;
+        while (std::getline(imgStream, img, '|')) {
+            data.characterImages.push_back(img);
+        }
+
+        std::stringstream nameStream(charNames);
+        std::string name;
+        while (std::getline(nameStream, name, '|')) {
+            data.characterNames.push_back(name);
+        }
 
         csvData.push_back(data);
     }
@@ -45,31 +64,58 @@ void Text::LoadCSV(const std::string& fileName)
 
 void Text::LoadImages()
 {
-    if (currentLine < csvData.size()) 
+    if (currentLine < csvData.size())
     {
-        backgroundImageHandle = LoadGraph(csvData[currentLine].backgroundImage.c_str());
-        characterImageHandle = LoadGraph(csvData[currentLine].characterImage.c_str());
+        backgroundImageHandle = LoadGraph((ASSET_PATH + csvData[currentLine].backgroundImage).c_str());
+        if (backgroundImageHandle == -1)
+        {
+            std::cerr << "背景画像の読み込みに失敗: " << csvData[currentLine].backgroundImage << std::endl;
+        }
+
+        for (int handle : characterImageHandles)
+        {
+            DeleteGraph(handle);
+        }
+        characterImageHandles.clear();
+
+        for (const auto& img : csvData[currentLine].characterImages)
+        {
+            int handle = LoadGraph((ASSET_PATH + img).c_str());
+            if (handle == -1)
+            {
+                std::cerr << "キャラクター画像の読み込みに失敗: " << img << std::endl;
+            }
+            characterImageHandles.push_back(handle);
+        }
     }
 }
+
+
 
 void Text::UnloadImages()
 {
-    if (backgroundImageHandle != -1) 
+    if (backgroundImageHandle != -1)
     {
         DeleteGraph(backgroundImageHandle);
+        backgroundImageHandle = -1;
     }
-    if (characterImageHandle != -1) 
+
+    for (int handle : characterImageHandles)
     {
-        DeleteGraph(characterImageHandle);
+        DeleteGraph(handle);
     }
+    characterImageHandles.clear();
 }
 
-void Text::Update() 
+
+void Text::Update()
 {
-    if (CheckHitKey(KEY_INPUT_RETURN) == 1) 
+    if (csvData.empty()) return;
+
+    if (CheckHitKey(KEY_INPUT_RETURN) == 1)
     {
         currentLine++;
-        if (currentLine >= csvData.size()) 
+        if (currentLine >= csvData.size())
         {
             currentLine = 0; // 最後の行に達したら最初に戻る
         }
@@ -78,16 +124,64 @@ void Text::Update()
     }
 }
 
-void Text::Render() const 
+void Text::Render() const
 {
-    if (backgroundImageHandle != -1) 
+
+    if (csvData.empty())
+    {
+        DrawString(50, 50, "シナリオデータがありません", GetColor(255, 255, 255));
+        return;
+    }
+
+    if (backgroundImageHandle != -1)
     {
         DrawGraph(0, 0, backgroundImageHandle, TRUE);
     }
-    if (characterImageHandle != -1)
+
+    // キャラクター画像を横並びに描画
+    int x = 100;
+    for (size_t i = 0; i < characterImageHandles.size(); ++i)
     {
-        DrawGraph(100, 100, characterImageHandle, TRUE); // キャラクター画像の位置は適宜調整
+        if (characterImageHandles[i] != -1)
+        {
+            DrawGraph(x, 200, characterImageHandles[i], TRUE);
+        }
+        x += 200; // キャラごとに位置をずらす
     }
-    DrawString(50, 50, csvData[currentLine].characterName.c_str(), GetColor(255, 255, 255));
-    DrawString(50, 100, csvData[currentLine].text.c_str(), GetColor(255, 255, 255));
+}
+
+void Text::RenderText()
+{
+	if (csvData.empty())
+	{
+		DrawString(50, 50, "シナリオデータがありません", GetColor(255, 255, 255));
+		return;
+	}
+
+	// 名前とセリフの描画
+	if (!csvData[currentLine].characterNames.empty())
+	{
+		DrawString(200, 780, csvData[currentLine].characterNames[0].c_str(), GetColor(255, 255, 255));
+	}
+	DrawString(150, 850, csvData[currentLine].text.c_str(), GetColor(255, 255, 255));
+}
+
+void Text::SetFontSize(int size)
+{
+    fontSize = size;
+    CreateTextFont();
+}
+
+void Text::CreateTextFont()
+{
+    if (fontHandle != -1)
+    {
+        DeleteFontToHandle(fontHandle);
+    }
+
+	fontHandle = CreateFontToHandle("ＭＳ ゴシック", fontSize, 3, DX_FONTTYPE_ANTIALIASING_EDGE, -1, -1);
+	if (fontHandle == -1)
+	{
+		std::cerr << "フォントの作成に失敗" << std::endl;
+	}
 }
