@@ -1,11 +1,14 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <chrono>
+
+using namespace std;
 
 class Text
 {
 public:
-    Text(const std::string& csvFileName);
+    Text(const string& csvFileName);
     ~Text();
     void Update();
     void Render() const;
@@ -16,10 +19,10 @@ public:
 private:
     struct SceneData 
     {
-        std::string backgroundImage;
-        std::vector<std::string> characterImages;
-        std::vector<std::string> characterNames;
-        std::string text;
+        string backgroundImage;
+        vector<string> characterImages;
+        vector<string> characterNames;
+        string text;
     };
 
 
@@ -27,14 +30,17 @@ private:
     size_t currentLine;
     int backgroundImageHandle;
     int characterImageHandle;
-    std::vector<int> characterImageHandles;
+    vector<int> characterImageHandles;
 
     int fontSize;
     int fontHandle;
 
-    const std::string ASSET_PATH = "Assets/karisozai/"; // 画像フォルダのパス
+    chrono::steady_clock::time_point lastUpdateTime; // 最後にシナリオを進めた時間
+    int updateInterval; // シナリオを進める間隔
 
-    void LoadCSV(const std::string& fileName);
+    const string ASSET_PATH = "Assets/karisozai/"; // 画像フォルダのパス
+
+    void LoadCSV(const string& fileName);
     void LoadImages();
     void UnloadImages();
     void CreateTextFont();

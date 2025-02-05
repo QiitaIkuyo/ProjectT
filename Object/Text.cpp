@@ -4,10 +4,11 @@
 #include <sstream>
 #include <iostream>
 
-Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1), fontSize(50), fontHandle(-1)
+Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1), fontSize(50), fontHandle(-1), updateInterval(1000)
 {
     LoadCSV(csvFileName);
     LoadImages();
+    lastUpdateTime = std::chrono::steady_clock::now(); // 初期化時の時間を記録
 }
 
 Text::~Text() 
@@ -108,19 +109,18 @@ void Text::UnloadImages()
 }
 
 
-void Text::Update()
-{
-    if (csvData.empty()) return;
+void Text::Update() {
+    auto now = chrono::steady_clock::now();
+    auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - lastUpdateTime).count();
 
-    if (CheckHitKey(KEY_INPUT_RETURN) == 1)
-    {
+    if (CheckHitKey(KEY_INPUT_RETURN) == 1 && elapsed >= updateInterval) {
         currentLine++;
-        if (currentLine >= csvData.size())
-        {
+        if (currentLine >= csvData.size()) {
             currentLine = 0; // 最後の行に達したら最初に戻る
         }
         UnloadImages();
         LoadImages();
+        lastUpdateTime = now; // 最後にシナリオを進めた時間を更新
     }
 }
 
