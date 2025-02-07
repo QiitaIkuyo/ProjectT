@@ -1,5 +1,6 @@
 #include "Text.h"
 #include "DxLib.h"
+#include "../Game/Mouse.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -113,7 +114,7 @@ void Text::Update() {
     auto now = chrono::steady_clock::now();
     auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - lastUpdateTime).count();
 
-    if (CheckHitKey(KEY_INPUT_RETURN) == 1 && elapsed >= updateInterval) {
+    if (Mouse::IsLeftButtonPressed() == 1 && elapsed >= updateInterval) {
         currentLine++;
         if (currentLine >= csvData.size()) {
             currentLine = 0; // ç≈å„ÇÃçsÇ…íBÇµÇΩÇÁç≈èâÇ…ñﬂÇÈ
