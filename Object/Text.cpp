@@ -162,7 +162,7 @@ void Text::RenderText()
 	// –¼‘O‚ÆƒZƒŠƒt‚Ì•`‰æ
 	if (!csvData[currentLine].characterNames.empty())
 	{
-		DrawString(200, 780, csvData[currentLine].characterNames[0].c_str(), GetColor(255, 255, 255));
+		DrawString(210,790, csvData[currentLine].characterNames[0].c_str(), GetColor(255, 255, 255));
 	}
 	DrawString(150, 850, csvData[currentLine].text.c_str(), GetColor(255, 255, 255));
 }
