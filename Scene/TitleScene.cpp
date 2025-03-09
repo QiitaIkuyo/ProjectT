@@ -27,8 +27,6 @@ bool TitleScene::Initialize()
 
 void TitleScene::Update()
 {
-	GetMousePoint(&mouseX, &mouseY);
-
 	SBClick();
 	STBClick();
 	EBClick();
@@ -61,6 +59,10 @@ void TitleScene::SBClick()
 	int sb_scaX = 150, 
 		sb_scaY = 100;
 
+	GetMousePoint(&mx, &my);
+	mouseX = mx;
+	mouseY = my;
+
 	if (Mouse::IsLeftButtonPressed() == 1 &&
 		mouseX >= sb_posX && mouseX <= sb_posX + sb_scaX &&
 		mouseY >= sb_posY && mouseY <= sb_posY + sb_scaY)
@@ -74,6 +76,10 @@ void TitleScene::STBClick()
 	int stb_scaX = 150,
 		stb_scaY = 100;
 
+	GetMousePoint(&mx, &my);
+	mouseX = mx;
+	mouseY = my;
+
 	if (Mouse::IsLeftButtonPressed() == 1 &&
 		mouseX >= stb_posX && mouseX <= stb_posX + stb_scaX &&
 		mouseY >= stb_posY && mouseY <= stb_posY + stb_scaY)
@@ -86,6 +92,10 @@ void TitleScene::EBClick()
 {
 	int eb_scaX = 150,
 		eb_scaY = 100;
+
+	GetMousePoint(&mx, &my);
+	mouseX = mx;
+	mouseY = my;
 
 	if (Mouse::IsLeftButtonPressed() == 1 &&
 		mouseX >= eb_posX && mouseX <= eb_posX + eb_scaX &&

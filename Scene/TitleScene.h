@@ -32,5 +32,6 @@ private:
 	int eb_posY = 900;
 	void EBClick();
 
+	int mx, my;
 	int mouseX, mouseY;
 };
