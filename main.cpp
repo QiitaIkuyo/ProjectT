@@ -18,7 +18,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	SetGraphMode(1920, 1080, 32);
 
-	SceneManager::TransitionScene(Game);
+	SceneManager::TransitionScene(Title);
 	
 	SceneManager::Initialize();
 	
