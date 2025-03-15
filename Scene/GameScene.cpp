@@ -17,6 +17,7 @@ bool GameScene::Initialize()
 void GameScene::Update()
 {
 	p_Text->Update();
+	p_UI->Update();
 
 	if (GetKeyState('Q'))
 	{
