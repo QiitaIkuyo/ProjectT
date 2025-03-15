@@ -10,7 +10,7 @@ class UI
 {
 public:
 	UI() {};
-	~UI() {};
+	~UI() {  };
 
 	// ‰Šú‰»EXV‚È‚Ç
 	void Initialize();
@@ -19,6 +19,6 @@ public:
 
 private:
 	int messageWindow;
-
+	int magnifyingGlass;
 };
 

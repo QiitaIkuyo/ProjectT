@@ -21,6 +21,11 @@ public:
 
 private:
 
+	void UIHide();
+	bool isRenderUI = true;
+	int lastClickTime; // ÅŒã‚ÉƒNƒŠƒbƒN‚³‚ê‚½ŠÔ
+	const int clickInterval = 500;
+
 	shared_ptr<UI>p_UI = nullptr;
 	shared_ptr<Text>p_Text = nullptr;
 };
