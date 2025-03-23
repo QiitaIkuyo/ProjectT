@@ -7,7 +7,6 @@ bool GameScene::Initialize()
 	p_UI->Initialize();
 
 	p_Text = std::make_shared<Text>("Assets/CSV/ex_csvfile.csv");
-
 	isRenderUI = true;
 	lastClickTime = GetNowCount(); // ‰Šú‰»‚ÌŠÔ‚ğ‹L˜^
 

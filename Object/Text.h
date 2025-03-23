@@ -12,7 +12,7 @@ public:
     ~Text();
     void Update();
     void Render() const;
-    void RenderText();
+    void RenderText() const;
 
     void SetFontSize(int size);
 
@@ -37,6 +37,10 @@ private:
 
     chrono::steady_clock::time_point lastUpdateTime; // 最後にシナリオを進めた時間
     int updateInterval; // シナリオを進める間隔
+
+    size_t textIndex; // 現在表示されているテキストのインデックス
+    std::chrono::steady_clock::time_point lastTextUpdateTime; // 最後にテキストを更新した時間
+    int textUpdateInterval; // テキストの更新間隔（ミリ秒）
 
     const string ASSET_PATH = "Assets/karisozai/"; // 画像フォルダのパス
 

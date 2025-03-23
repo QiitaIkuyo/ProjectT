@@ -5,10 +5,11 @@
 #include <sstream>
 #include <iostream>
 
-Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1), fontSize(50), fontHandle(-1), updateInterval(1000)
+Text::Text(const std::string& csvFileName) : currentLine(0), backgroundImageHandle(-1), characterImageHandle(-1), fontSize(40), fontHandle(-1), updateInterval(1000)
 {
     LoadCSV(csvFileName);
     LoadImages();
+    CreateTextFont();
     lastUpdateTime = std::chrono::steady_clock::now(); // 初期化時の時間を記録
 }
 
@@ -111,8 +112,9 @@ void Text::UnloadImages()
 
 
 void Text::Update() {
-    auto now = chrono::steady_clock::now();
-    auto elapsed = chrono::duration_cast<chrono::milliseconds>(now - lastUpdateTime).count();
+    auto now = std::chrono::steady_clock::now();
+    auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdateTime).count();
+    auto textElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastTextUpdateTime).count();
 
     if (Mouse::IsLeftButtonPressed() == 1 && elapsed >= updateInterval) {
         currentLine++;
@@ -122,6 +124,13 @@ void Text::Update() {
         UnloadImages();
         LoadImages();
         lastUpdateTime = now; // 最後にシナリオを進めた時間を更新
+        textIndex = 0; // テキストのインデックスをリセット
+    }
+
+    // テキストのインデックスを更新
+    if (textElapsed >= textUpdateInterval && textIndex < csvData[currentLine].text.size()) {
+        textIndex++;
+        lastTextUpdateTime = now; // 最後にテキストを更新した時間を更新
     }
 }
 
@@ -151,20 +160,23 @@ void Text::Render() const
     }
 }
 
-void Text::RenderText()
+void Text::RenderText() const
 {
-	if (csvData.empty())
-	{
-		DrawString(50, 50, "シナリオデータがありません", GetColor(255, 255, 255));
-		return;
-	}
+    if (csvData.empty())
+    {
+        DrawString(50, 50, "シナリオデータがありません", GetColor(255, 255, 255));
+        return;
+    }
 
-	// 名前とセリフの描画
-	if (!csvData[currentLine].characterNames.empty())
-	{
-		DrawString(210,790, csvData[currentLine].characterNames[0].c_str(), GetColor(255, 255, 255));
-	}
-	DrawString(150, 850, csvData[currentLine].text.c_str(), GetColor(255, 255, 255));
+    // 名前とセリフの描画
+    if (!csvData[currentLine].characterNames.empty())
+    {
+        DrawStringToHandle(220, 710, csvData[currentLine].characterNames[0].c_str(), GetColor(255, 255, 255), fontHandle);
+    }
+
+    // 現在のインデックスまでのテキストを描画
+    std::string textToRender = csvData[currentLine].text.substr(0, textIndex);
+    DrawStringToHandle(150, 800, textToRender.c_str(), GetColor(255, 255, 255), fontHandle);
 }
 
 void Text::SetFontSize(int size)
