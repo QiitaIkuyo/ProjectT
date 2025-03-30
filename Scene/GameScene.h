@@ -20,6 +20,12 @@ public:
 	void Render() override; // 描画
 
 private:
+	
+	bool isScenePause; // ポーズ
+	bool prevEscapeKeyState = false; // 前回のフレームでのESCAPEキーの状態
+	void RenderLog() const; // ログの描画
+	void RenderLogBG() const; // ログの背景描画
+
 
 	void UIHide();
 	bool isRenderUI = true;
